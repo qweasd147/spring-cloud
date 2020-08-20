@@ -1,0 +1,6 @@
+logging:
+  level:
+    #org.springframework:
+      #cloud: trace
+      #web: trace
+    com.service.demo.service.BService: DEBUG
