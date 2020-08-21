@@ -1,0 +1,24 @@
+spring:
+  application:
+    name: zuul
+
+server:
+  port: 4000
+
+zuul:
+  routes:
+    service-a:
+      path: /service/a/**
+      serviceId: service-a
+      stripPrefix: false
+      url: http://localhost:8080
+    service-b:
+      path: /service/b/**
+      serviceId: service-b
+      stripPrefix: false
+      url: http://localhost:8081
+
+
+logging:
+  level:
+    com.netflix.zuul: debug
