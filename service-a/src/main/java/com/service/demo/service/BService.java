@@ -7,7 +7,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 
 import java.util.List;
 
-@FeignClient(name = "serviceB", url = "http://localhost:8081"
+@FeignClient(name = "serviceB"
         , fallbackFactory = BServiceFallbackFactory.class, configuration = FeignConfiguration.class)
 public interface BService {
 

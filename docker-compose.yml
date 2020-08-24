@@ -1,0 +1,32 @@
+version: "3.1"
+
+services:
+  gateway:
+    container_name: cloud-zuul
+    build:
+      context: ./api-gateway
+    restart: always
+    ports:
+      - 4000:4000
+    depends_on:
+      - service-a
+      - service-b
+    links:
+      - service-a:servicea
+      - service-b:serviceb
+
+  service-a:
+    container_name: cloud-service-a
+    build:
+      context: ./service-a
+    restart: always
+    links:
+      - service-b:serviceb
+    depends_on:
+      - service-b
+
+  service-b:
+    container_name: cloud-service-b
+    build:
+      context: ./service-b
+    restart: always

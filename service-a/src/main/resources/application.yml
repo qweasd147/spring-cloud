@@ -4,3 +4,25 @@ logging:
       #cloud: trace
       #web: trace
     com.service.demo.service.BService: DEBUG
+
+spring:
+  profiles:
+    active: local
+
+---
+spring:
+  profiles:
+    active: local
+
+serviceB:
+  ribbon:
+    listOfServers: localhost:8081
+
+---
+spring:
+  profiles:
+    active: docker
+
+serviceB:
+  ribbon:
+    listOfServers: serviceb:8081
