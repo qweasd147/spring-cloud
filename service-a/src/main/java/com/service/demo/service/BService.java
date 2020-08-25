@@ -7,8 +7,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 
 import java.util.List;
 
-@FeignClient(name = "serviceB"
-        , fallbackFactory = BServiceFallbackFactory.class, configuration = FeignConfiguration.class)
+@FeignClient(name = "service-b", fallbackFactory = BServiceFallbackFactory.class, configuration = FeignConfiguration.class)
 public interface BService {
 
     @RequestMapping("/service/b")

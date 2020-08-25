@@ -3,26 +3,22 @@ spring:
     name: zuul
   profiles:
     active: local
+  jackson:
+    serialization:
+      INDENT_OUTPUT: true
 
 server:
   port: 4000
 
 zuul:
-  routes:
-    service-a:
-      path: /service/a/**
-      serviceId: service-a
-      stripPrefix: false
-      url: http://localhost:8080
-    service-b:
-      path: /service/b/**
-      serviceId: service-b
-      stripPrefix: false
-      url: http://localhost:8081
+  sensitiveHeaders: Cookie,Set-Cookie
 
 logging:
   level:
     com.netflix.zuul: debug
+    #org.springframework.boot.autoconfigure.security.oauth2.resource.UserInfoTokenServices: DEBUG
+    #org.springframework.security.web: DEBUG
+    #org.springframework.security: DEBUG
 
 ---
 spring:
@@ -40,6 +36,11 @@ zuul:
       serviceId: service-b
       stripPrefix: false
       url: http://localhost:8081
+    auth:
+      path: /auth/**
+      serviceId: auth
+      stripPrefix: true
+      url: http://localhost:8082
 
 ---
 spring:
@@ -57,3 +58,8 @@ zuul:
       serviceId: service-b
       stripPrefix: false
       url: http://serviceb:8081
+    auth:
+      path: /auth/**
+      serviceId: auth
+      stripPrefix: true
+      url: http://auth:8082
