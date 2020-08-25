@@ -11,9 +11,11 @@ services:
     depends_on:
       - service-a
       - service-b
+      - auth
     links:
       - service-a:servicea
       - service-b:serviceb
+      - auth:auth
 
   service-a:
     container_name: cloud-service-a
@@ -30,3 +32,25 @@ services:
     build:
       context: ./service-b
     restart: always
+
+  db:
+    container_name: cloud_db
+    image: mysql:5.7
+    command: --character-set-server=utf8 --collation-server=utf8_unicode_ci
+    restart: always
+    environment:
+      MYSQL_ALLOW_EMPTY_PASSWORD: "yes"
+      MYSQL_DATABASE: oauth
+    volumes:
+      - ./sql/:/docker-entrypoint-initdb.d
+
+  auth:
+    container_name: cloud-auth
+    image: qweasd147/jwt_auth:auth
+    restart: always
+    environment:
+      server.port: 8082
+    depends_on:
+      - db
+    links:
+      - "db:DB_HOST"
