@@ -1,0 +1,3 @@
+service-b:
+  ribbon:
+    listOfServers: localhost:8081

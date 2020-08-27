@@ -1,0 +1,3 @@
+service-b:
+  ribbon:
+    listOfServers: serviceb:8081
