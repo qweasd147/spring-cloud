@@ -1,0 +1,46 @@
+spring:
+  profiles:
+    active: docker
+  application:
+    name: api-gateway
+
+---
+spring:
+  profiles: local
+  cloud:
+    config:
+      enabled: false
+  jackson:
+    serialization:
+      INDENT_OUTPUT: true
+
+
+server:
+  port: 4000
+
+zuul:
+  sensitiveHeaders: Cookie,Set-Cookie
+  routes:
+    service-a:
+      path: /service/a/**
+      serviceId: service-a
+      stripPrefix: false
+      url: http://localhost:8080
+    service-b:
+      path: /service/b/**
+      serviceId: service-b
+      stripPrefix: false
+      url: http://localhost:8081
+    auth:
+      path: /auth/**
+      serviceId: auth
+      stripPrefix: true
+      url: http://localhost:8082
+
+---
+spring:
+  profiles: docker
+  cloud:
+    config:
+      uri: ${CONFIG_SERVER_URI:http://localhost:8888}
+      fail-fast: true # config 서버 못찾으면 서버 종료

@@ -23,6 +23,9 @@ dependencies {
     }
     implementation('org.springframework.boot:spring-boot-starter-undertow')
 
+    //spring cloud config
+    implementation 'org.springframework.cloud:spring-cloud-config-client'
+
     compileOnly 'org.projectlombok:lombok'
 
 

@@ -1,0 +1,24 @@
+spring:
+  profiles:
+    active: local
+  application:
+    name: service-a
+
+---
+spring:
+  profiles: local
+  cloud:
+    config:
+      enabled: false
+
+service-b:
+  ribbon:
+    listOfServers: localhost:8081
+
+---
+spring:
+  profiles: docker
+  cloud:
+    config:
+      uri: ${CONFIG_SERVER_URI:http://localhost:8888}
+      fail-fast: true # config 서버 못찾으면 서버 종료

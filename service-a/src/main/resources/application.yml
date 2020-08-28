@@ -1,27 +1,6 @@
-spring:
-  profiles:
-    active: local
-
 logging:
   level:
     #org.springframework:
     #  cloud: trace
     #  web: trace
     com.service.demo.service.BService: DEBUG
-
-
----
-spring:
-  profiles: local
-
-service-b:
-  ribbon:
-    listOfServers: localhost:8081
-
----
-spring:
-  profiles: docker
-
-service-b:
-  ribbon:
-    listOfServers: serviceb:8081

@@ -1,0 +1,28 @@
+spring:
+  application:
+    name: zuul
+  jackson:
+    serialization:
+      INDENT_OUTPUT: true
+
+server:
+  port: 4000
+
+zuul:
+  sensitiveHeaders: Cookie,Set-Cookie
+  routes:
+    service-a:
+      path: /service/a/**
+      serviceId: service-a
+      stripPrefix: false
+      url: http://localhost:8080
+    service-b:
+      path: /service/b/**
+      serviceId: service-b
+      stripPrefix: false
+      url: http://localhost:8081
+    auth:
+      path: /auth/**
+      serviceId: auth
+      stripPrefix: true
+      url: http://localhost:8082
