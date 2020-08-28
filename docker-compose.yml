@@ -1,6 +1,12 @@
 version: "3.1"
 
 services:
+  config-server:
+    container_name: cloud_config_server
+    build:
+      context: ./config-server
+    restart: always
+
   gateway:
     container_name: cloud-zuul
     build:
@@ -8,11 +14,15 @@ services:
     restart: always
     ports:
       - 4000:4000
+    environment:
+      CONFIG_SERVER_URI: "http://configserver:8888"
     depends_on:
+      - config-server
       - service-a
       - service-b
       - auth
     links:
+      - config-server:configserver
       - service-a:servicea
       - service-b:serviceb
       - auth:auth
@@ -22,10 +32,14 @@ services:
     build:
       context: ./service-a
     restart: always
-    links:
-      - service-b:serviceb
+    environment:
+      CONFIG_SERVER_URI: "http://configserver:8888"
     depends_on:
+      - config-server
       - service-b
+    links:
+      - config-server:configserver
+      - service-b:serviceb
 
   service-b:
     container_name: cloud-service-b
