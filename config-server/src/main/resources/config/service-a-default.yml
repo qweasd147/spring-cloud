@@ -1,0 +1,17 @@
+feign:
+  hystrix:
+    enabled: true
+
+hystrix:
+  command:
+    default:    # command key. use 'default' for global setting.
+      execution:
+        isolation:
+          thread:
+            timeoutInMilliseconds: 3000
+      circuitBreaker:
+        requestVolumeThreshold: 1   # 감시 기간내 최소 요청 수 기본 20. 오류 감시 기간 동안 해당 요청 수 보다 큰 요청 수가 들어와야 서킷브래이커를 판단한다.
+        errorThresholdPercentage: 50 # 서킷 브래이커를 열기 위한 요청 대비 오류율. default 50
+      metrics:
+        rollingStats:
+          timeInMilliseconds: 10000 # default 10000(10s)
