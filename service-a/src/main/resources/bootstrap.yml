@@ -1,6 +1,6 @@
 spring:
   profiles:
-    active: local
+    active: local,config
   application:
     name: service-a
 
@@ -10,14 +10,6 @@ spring:
   cloud:
     config:
       enabled: false
-
-service-b:
-  ribbon:
-    listOfServers: localhost:8081
-
-feign:
-  hystrix:
-    enabled: true
 
 ---
 spring:
