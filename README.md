@@ -1,39 +1,69 @@
 # Spring Cloud
 
-## MSA
+## 사용법
 
-각각의 용도에 맞게 하나의 큰 어플리케이션이 아닌, 여러개의 작은 어플리케이션으로 쪼개어 변경 및 조합을 쉽게 만든 아키텍쳐
+```
+$ git clone https://github.com/qweasd147/spring-cloud.git
+$ ls ./spring-cloud
+$ docker-compose up -d
+```
 
-### 장점
+### 1. 회원가입 요청
 
-#### 확장성이 좋다
+```sh
+curl -X POST \
+-F 'email=joohyung@gmail.com' \
+-F 'name=joo' \
+-F 'nickName=nickname421421' \
+-F 'password=joo123' http://localhost:4000/auth/users/signup
+```
 
-하나의 큰 어플리케이션으로 만들었다고 가정하면 특정 구간 병목현상을 발견하여 이중화를 하면 많은 리소스를 사용하게 된다. 하지만 여러 어플리케이션으로 나눈 상태에서 특정 어플리케이션만 인스턴스를 늘리는 작업은 상대적으로 적은 리소스만 필요하게 된다.
+#### 내부적으로 호출되는 서비스 순서
 
-#### 신기술 적용이 좋다
+1. zuul(API Gateway)
+2. cloud-auth(인증서버)
 
-기존 레거시 프로그램을 만지다 보면 괜찮다고 생각되는 패턴, 라이브러리 등의 적용을 하고 싶어도 전혀 예상하지 못한곳에 악영양을 줄 수가 있어 고민하게 된다.
-이럴때 차라리 여러개의 작은 어플리케이션 형태라면 이러한 부분을 검토하는 시간도 빠르고, 기존 레거시와 일관성 때문에 생길 수 있는 문제들을 고려하지 않아도 된다.
+### 2. 토큰 생성 요청
 
-### 단점
+```sh
+$ curl -i -u clientId:secret \
+-d "grant_type=password&username=(받은 idx 값)&password=joo123" \
+-X POST http://localhost:4000/auth/oauth/token
+```
 
-#### 성능
+#### 내부적으로 호출되는 서비스 순서
 
-MSA는 성능까진 크게 고려하지 않는다. 물론 어느정도 고려 대상이긴 하지만 `Monolithic Architecture`보단 느려질 가능성이 높다.
+1. zuul(API Gateway)
+2. cloud-auth(인증서버)
 
-#### Transaction 처리
+### 3. 서비스 a 호출 (인증 필요 없음)
 
-트랜잭션이 보장되어야 하는 작업의 경우, 여러 어플리케이션을 걸쳐 요청한 request를 다시 되돌리기는 힘들다. 이런건 전략적으로 잘 구성해놔야 하는데(`보상 트랜잭션` 등) 이러한 요소 자체가 많은 리스크를 가질수 밖에 없다.
+```sh
+curl -i 'http://localhost:4000/service/a'
+```
 
-## Spring Cloud
+#### 내부적으로 호출되는 서비스 순서
 
-`Spring Cloud`는 이런 MSA 환경에서 각 서비스 간의 통신과 공통 부분 등을 쉽게 구축 및 운영을 도와주는 도구이다. 자주 쓰는 도구로는 아래와 같은 것들이 있다.
+1. zuul(API Gateway)
+2. service a
+3. service b
+
+### 4. 서비스 b 호출 (인증 필요)
+
+```sh
+curl 'http://localhost:4000/service/b' -H 'authorization: Bearer 발급받은 access token'
+
+```
+
+1. zuul(API Gateway)
+2. service b
+
+**참고**`API Gateway`에서 인증 절차(토큰 파싱)가 이루어진다
+
+## 사용한 것들
 
 1. Zuul (API Gateway)
 2. Hystrix (Circuit Breaker)
 3. Ribbon (L7 Load Balancing)
-4. Eureka (Discovery Server)
-5. Config Server
-6. Spring Cloud Bus(notify configuration)
-
-TODO : 위에꺼 설명
+4. Config Server
+5. 인증 서버(외부 docker image 활용)
