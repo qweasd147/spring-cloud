@@ -8,6 +8,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.cloud.netflix.zuul.filters.support.FilterConstants;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.oauth2.provider.OAuth2Authentication;
+import org.springframework.security.oauth2.provider.token.ResourceServerTokenServices;
 import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
 
@@ -19,8 +20,8 @@ import java.util.Objects;
 @Slf4j
 public class ZuulContextConfig extends ZuulFilter {
 
+    private final ResourceServerTokenServices tokenServices;
     private static final String TOKEN_HEADER = "Bearer ";
-
 
     @Override
     public String filterType() {
@@ -46,8 +47,24 @@ public class ZuulContextConfig extends ZuulFilter {
     @Override
     public Object run() throws ZuulException {
 
+        HttpServletRequest request = RequestContext.getCurrentContext().getRequest();
+        String tokenHeaderVal = request.getHeader("Authorization");
+
+        if(StringUtils.isEmpty(tokenHeaderVal))  return null;
+
+        final String accessToken = tokenHeaderVal.substring(TOKEN_HEADER.length());
+        final String userName;
+
+        try{
+            OAuth2Authentication claims = this.tokenServices.loadAuthentication(accessToken);
+            userName = claims.getName();
+        }catch (RuntimeException ex){
+            log.info("토큰 파싱 에러 토큰 만료됬을 가능성이 제일 높음. {}", accessToken);
+            return null;
+        }
+
         RequestContext.getCurrentContext()
-                .addZuulRequestHeader("username", getClaims().getName());
+                .addZuulRequestHeader("username", userName);
 
         return null;
     }
