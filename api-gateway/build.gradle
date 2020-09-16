@@ -26,6 +26,7 @@ dependencies {
 
     implementation ('org.springframework.cloud:spring-cloud-starter-netflix-zuul') {
         exclude module: "spring-boot-starter-tomcat"
+        exclude module: "spring-boot-starter-actuator"
     }
     implementation('org.springframework.boot:spring-boot-starter-undertow')
 
